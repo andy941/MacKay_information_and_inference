@@ -30,6 +30,7 @@ link-citations: true
 code-fold: true
 code-overflow: wrap
 
+callout-appearance: minimal
 
 format:
   html:

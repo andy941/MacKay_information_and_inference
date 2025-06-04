@@ -1,0 +1,61 @@
+---
+title: "Probability, Entropy and Inference"
+date: 03/07/2005
+date-format: "DD MMMM YYYY"
+date-modified: last-modified
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r}
+#| label: imports-and-functions-r
+#| code-summary: "Imports and Functions - R"
+#| output: false
+
+library(tidyverse)
+library(reticulate)
+library(ggpubr)
+library(ggthemes)
+library(kableExtra)
+```
+
+
+---
+
+### Exercise 2.2
+
+::: {.callout-note}
+Are the random variables X and Y in the joint ensemble of figure 2.2 independent?
+:::
+
+Yes, because the marginal probabilities of monograms marginalized over the joint ensemble on probabilities for all possible bigrams $P(x,y)$ equal exactly the probability of monograms themselves $P(x) = P(y)$.
+
+
+### Exercise 2.4
+
+::: {.callout-note}
+An urn contains $K$ balls, of which $B$ are black and $W = K − B$ are white. Fred draws a ball at random from the urn and replaces it, $N$ times.
+a) What is the probability distribution of the number of times a black ball is drawn, $nB$?
+a) What is the expectation of $nB$? What is the variance of $nB$? What is the standard deviation of $nB$? Give numerical answers for the cases $N = 5$ and $N = 400$, when $B = 2$ and $K = 10$.
+:::
+
+
+
+### Exercise 2.4
+
+::: {.callout-note}
+An urn contains $K$ balls, of which $B$ are black and $W = K−B$ are white. We define the fraction $fB≡B/K$.
+Fred draws N times from the urn, exactly as in exercise 2.4, obtaining $nB$ blacks, and computes the quantity
+$$
+z = \frac{(n_B-f_{B}N)^2}{Nf_B(1-f_B)}
+$$
+What is the expectation of $z$? In the case $N = 5$ and $fB = 1/5$,
+what is the probability distribution of $z$? What is the probability that $z < 1$?
+:::
+
+::: {.callout-tip appearance=default}
+Compare z with the quantities computed in the previous exercise.
+:::
+
