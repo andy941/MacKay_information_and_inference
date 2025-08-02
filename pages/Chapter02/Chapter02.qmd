@@ -54,7 +54,7 @@ Where $n$ is the number of trials, $k$ is the number of successes (black balls d
 
 #### Expectation and Mean
 
-The mean is simply $np$ as each draw we have probability $p$ of drawing a black ball. 
+The mean is simply $np$ as each draw we have probability $p$ of drawing a black ball.
 The mode (expectation) is the mean rounded to the nearest integer.
 
 #### Variance
@@ -74,9 +74,9 @@ $$
 \mathbb{E}[X^2] = \mathbb{E}[X(X - 1)] + \mathbb{E}[X]
 $$
 
-This is nice because $\mathbb{E}[X]$ is again simply the mean $np$. 
+This is nice because $\mathbb{E}[X]$ is again simply the mean $np$.
 
-The first term is akin to having two trial $X$ and $X-1$ which means it can be simplified to 
+The first term is akin to having two trial $X$ and $X-1$ which means it can be simplified to
 
 $$
 \mathbb{E}[X(X - 1)] = n(n-1)p^2
@@ -88,7 +88,7 @@ $$
 \begin{split}
 \mathbb{V} &= \mathbb{E}[X^2] - \mathbb{E}[X] \\
 &= n(n-1)p^2 + np - n^2p^2 \\
-&= \cancel{n^2p^2} - np^2 + np - \cancel{n^2p^2} \\ 
+&= \cancel{n^2p^2} - np^2 + np - \cancel{n^2p^2} \\
 &= np(1-p)
 \end{split}
 $$
@@ -97,6 +97,32 @@ And the standard deviation is $\sigma = \sqrt{\mathbb{V}} = \sqrt{np(1-p)}$.
 
 #### Numerical answers
 
+- $N = 5$ the expectation is `r round(5*(2/10))` and the standard deviation is `r 5*(2/10)*(1 - (2/10))`
+- $N = 400$ the expectation is `r round(400*(2/10))` and the standard deviation is `r 400*(2/10)*(1 - (2/10))`
+
+```{r}
+#| fig-cap: Binomial distributions for drawing 10 and 100 balls with replacement
+#| label: fig-2.4-binomials-sampling-with-replacement
+#| fig-subcap:
+#|   - "For 5 draws"
+#|   - "For 400 draws"
+#| layout-ncol: 1
+
+n_black <- 2
+n_balls <- 10
+p_black <- n_black / n_balls
+
+for (n_draws in c(5, 400)) {
+  black_balls <- c(0:n_draws)
+  p <- data.frame(black_balls = black_balls) %>%
+    mutate(prob_success = dbinom(black_balls, n_draws, p_black)) %>%
+    ggplot(aes(black_balls, prob_success)) +
+    geom_col(fill = "black", alpha = .2) +
+    geom_line(color = "black") +
+    ggthemes::theme_few()
+  print(p)
+}
+```
 
 
 ### Exercise 2.4
