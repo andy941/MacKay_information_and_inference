@@ -20,7 +20,7 @@ theme:
 engine: knitr
 
 toc: true
-number-sections: true
+number-sections: false
 
 fig-dpi: 300
 bibliography: bibliography.bib
