@@ -101,7 +101,7 @@ And the standard deviation is $\sigma = \sqrt{\mathbb{V}} = \sqrt{np(1-p)}$.
 - $N = 400$ the expectation is `r round(400*(2/10))` and the standard deviation is `r 400*(2/10)*(1 - (2/10))`
 
 ```{r}
-#| fig-cap: Binomial distributions for drawing 10 and 100 balls with replacement
+#| fig-cap: Binomial distributions for drawing 10 and 400 balls with replacement
 #| label: fig-2.4-binomials-sampling-with-replacement
 #| fig-subcap:
 #|   - "For 5 draws"
@@ -117,8 +117,8 @@ for (n_draws in c(5, 400)) {
   p <- data.frame(black_balls = black_balls) %>%
     mutate(prob_success = dbinom(black_balls, n_draws, p_black)) %>%
     ggplot(aes(black_balls, prob_success)) +
-    geom_col(fill = "black", alpha = .2) +
-    geom_line(color = "black") +
+    geom_line(color = "black", alpha = .3) +
+    geom_point(color = "red", size = 1) +
     ggthemes::theme_few()
   print(p)
 }
@@ -140,3 +140,55 @@ what is the probability distribution of $z$? What is the probability that $z < 1
 ::: {.callout-tip appearance=default}
 Compare z with the quantities computed in the previous exercise.
 :::
+
+To compute the expectation of $z$, we can substitute the expectation of $n_B$ which is the expectation for the binomial we described above ($np$) to the equation
+
+$$
+n_B = f_{B}N
+$$
+
+From which follows the simplification
+
+$$
+z = \frac{(\cancel{f_{B}N}-\cancel{f_{B}N})^2}{Nf_B(1-f_B)} = 0
+$$
+
+At the point of maximum likelihood for the binomial, z is 0. Let's plot the distribution (the parameters are the same as the last exercise when drawing 5 balls, as the probability of drawing a black ball is still 0.2).
+
+```{r}
+#| fig-cap: $z$ distribution for drawing 5 balls with replacement. Dashed line represents $z = 1$.
+#| label: fig-2.4-z-sampling-with-replacement
+
+fz <- function(n_blacks, n_draws, p_black) {
+  ((n_blacks - p_black * n_draws)**2) / (n_draws * p_black * (1 - p_black))
+}
+
+n_draws <- 5
+p_black <- n_black / n_balls
+black_balls <- c(0:n_draws)
+
+binomial_vs_z <- data.frame(black_balls = black_balls) %>%
+  mutate(z = fz(black_balls, n_draws, p_black))
+
+binomial_vs_z %>%
+  ggplot(aes(black_balls, z)) +
+  geom_line(alpha = .7) +
+  geom_point(size = 1, color = "red") +
+  geom_hline(yintercept = 1.0, linetype = "dashed", color = "grey", alpha = 0.5) +
+  ggthemes::scale_color_few() +
+  ggthemes::theme_few()
+```
+
+To find out the probability of $z < 1$, let's rework the equation for $z$ and substitute the constant terms
+
+$$
+\begin{split}
+\frac{(n_B-f_{B}N)^2}{Nf_B(1-f_B)} &< 1 \\
+(n_B-1)^2 &< 1(1-0.2) \\
+(n_B-1)^2 &< 0.8 \\
+\end{split}
+$$
+
+The function of $z$ is less than $1$ only when $0.2$ as, as $n_B$ can only assume integer values between $1$ and $5$, and the left side can only be less than $1$ when $n_B-1 = 0$, $z<1$ when $n_B = 1$, which is also the expected number of black balls.
+
+This is also evident when plotting the $z$ function in @fig-2.4-z-sampling-with-replacement.
