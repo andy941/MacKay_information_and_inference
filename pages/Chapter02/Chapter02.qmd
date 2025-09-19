@@ -21,7 +21,6 @@ library(ggthemes)
 library(kableExtra)
 ```
 
-
 ---
 
 ### Exercise 2.2
@@ -192,3 +191,75 @@ $$
 The function of $z$ is less than $1$ only when $0.2$ as, as $n_B$ can only assume integer values between $1$ and $5$, and the left side can only be less than $1$ when $n_B-1 = 0$, $z<1$ when $n_B = 1$, which is also the expected number of black balls.
 
 This is also evident when plotting the $z$ function in @fig-2.4-z-sampling-with-replacement.
+
+### Exercise 2.8
+
+::: {.callout-note appearance=default}
+
+The problem in example 2.7 that we are trying to solve is the following:
+
+Bill tosses a bent coin $N$ times, obtaining a sequence of heads
+and tails. We assume that the coin has a probability $f_H$ of coming up
+heads; we do not know $f_H$. If $n_H$ heads have occurred in $N$ tosses, what
+is the probability distribution of $f_H$? (For example, $N$ might be 10, and
+$n_H$ might be 3; or, after a lot more tossing, we might have $N = 300$ and
+$n_H = 29$.) What is the probability that the $N+1^{th}$ outcome will be a
+head, given $n_H$ heads in $N$ tosses?
+
+:::
+
+::: {.callout-note}
+
+Assuming a uniform prior on $f_H$, $P(f_H) = 1$, solve the problem
+posed in example 2.7 (p.30). Sketch the posterior distribution of $f_H$ and
+compute the probability that the $N+1^{th}$ outcome will be a head, for
+
+a) $N$ = 3 and $n_H$ = 0;
+b) $N$ = 3 and $n_H$ = 2;
+c) $N$ = 10 and $n_H$ = 3;
+d) $N$ = 300 and $n_H$ = 29.
+
+:::
+
+::: {.callout-tip appearance=default}
+
+You will find the beta integral useful:
+
+$$
+\int_0^1 \mathrm{d}p_a\, p_a^{F_a}(1 - p_a)^{F_b} = \frac{\Gamma(F_a + 1)\Gamma(F_b + 1)}{\Gamma(F_a + F_b + 2)} = \frac{F_a!F_b!}{(F_a + F_b + 1)!}
+$$
+
+:::
+
+The probability of a coin coming out $n_H$ heads after $N$ flips follows the binomial distribution, what we do not know is the true rate $f_H$ (how much and in what direction the coin is bent). 
+
+
+$$
+L(n_H+1=Heads|N,n_H) = \int_{f_H=0}^{1}{df_H L(f_H|N,n_H)}
+$${#eq-lk-rates}
+
+We can use the binomial to get the likelihood of different rate hypothesis.
+
+$$
+L(f_H|N,n_H) = P(n_H|N,f_H)P(f_H)
+$$
+
+And substitute in @eq-lk-rates.
+
+$$
+L(n_H+1=Heads|N,n_H) = \int_{f_H=0}^{1}{df_H P(n_H|N,f_H)P(f_H)}
+$$
+
+Since we are assuming a uniform prior on $f_H$ 
+
+$$
+\int_{f_H=0}^{1}{df_HP(f_H)} := 1
+$$
+
+Which leaves
+
+$$
+L(n_H+1=Heads|N,n_H) = \int_{f_H=0}^{1}{df_H P(n_H|N,f_H)}
+$$
+
+
