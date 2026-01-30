@@ -3,8 +3,7 @@ title: "Notes"
 authors:
   name: "Andrea Finocchio"
   affiliation: Me Myself & I
-  roles: Senior Bioinformatics Scientist
   corresponding: true
 ---
 
-Add information about the website or a dashboard here.
+This repo has all the notes from my slow journey through [@alma999807843503606].

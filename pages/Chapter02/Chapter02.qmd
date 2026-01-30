@@ -13,12 +13,14 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 #| label: imports-and-functions-r
 #| code-summary: "Imports and Functions - R"
 #| output: false
+#| echo: false
 
 library(tidyverse)
 library(reticulate)
 library(ggpubr)
 library(ggthemes)
 library(kableExtra)
+library(latex2exp)
 ```
 
 ---
@@ -32,7 +34,7 @@ Are the random variables X and Y in the joint ensemble of figure 2.2 independent
 Yes, because the marginal probabilities of monograms marginalized over the joint ensemble on probabilities for all possible bigrams $P(x,y)$ equal exactly the probability of monograms themselves $P(x) = P(y)$.
 
 
-### Exercise 2.4
+### Exercise 2.4.a
 
 ::: {.callout-note}
 An urn contains $K$ balls, of which $B$ are black and $W = K − B$ are white. Fred draws a ball at random from the urn and replaces it, $N$ times.
@@ -114,7 +116,9 @@ p_black <- n_black / n_balls
 for (n_draws in c(5, 400)) {
   black_balls <- c(0:n_draws)
   p <- data.frame(black_balls = black_balls) %>%
-    mutate(prob_success = dbinom(black_balls, n_draws, p_black)) %>%
+    mutate(
+      prob_success = dbinom(black_balls, n_draws, p_black)
+    ) %>%
     ggplot(aes(black_balls, prob_success)) +
     geom_line(color = "black", alpha = .3) +
     geom_point(color = "red", size = 1) +
@@ -124,14 +128,16 @@ for (n_draws in c(5, 400)) {
 ```
 
 
-### Exercise 2.4
+### Exercise 2.4.b
 
 ::: {.callout-note}
-An urn contains $K$ balls, of which $B$ are black and $W = K−B$ are white. We define the fraction $fB≡B/K$.
+An urn contains $K$ balls, of which $B$ are black and $W = K−B$ are white. We define the fraction $f{B}\equiv{B}/K$.
 Fred draws N times from the urn, exactly as in exercise 2.4, obtaining $nB$ blacks, and computes the quantity
+
 $$
 z = \frac{(n_B-f_{B}N)^2}{Nf_B(1-f_B)}
 $$
+
 What is the expectation of $z$? In the case $N = 5$ and $fB = 1/5$,
 what is the probability distribution of $z$? What is the probability that $z < 1$?
 :::
@@ -159,7 +165,8 @@ At the point of maximum likelihood for the binomial, z is 0. Let's plot the dist
 #| label: fig-2.4-z-sampling-with-replacement
 
 fz <- function(n_blacks, n_draws, p_black) {
-  ((n_blacks - p_black * n_draws)**2) / (n_draws * p_black * (1 - p_black))
+  (n_blacks - p_black * n_draws)**2 /
+    (n_draws * p_black * (1 - p_black))
 }
 
 n_draws <- 5
@@ -173,7 +180,12 @@ binomial_vs_z %>%
   ggplot(aes(black_balls, z)) +
   geom_line(alpha = .7) +
   geom_point(size = 1, color = "red") +
-  geom_hline(yintercept = 1.0, linetype = "dashed", color = "grey", alpha = 0.5) +
+  geom_hline(
+    yintercept = 1.0,
+    linetype = "dashed",
+    color = "grey",
+    alpha = 0.5
+  ) +
   ggthemes::scale_color_few() +
   ggthemes::theme_few()
 ```
@@ -231,35 +243,113 @@ $$
 
 :::
 
-The probability of a coin coming out $n_H$ heads after $N$ flips follows the binomial distribution, what we do not know is the true rate $f_H$ (how much and in what direction the coin is bent). 
-
-
-$$
-L(n_H+1=Heads|N,n_H) = \int_{f_H=0}^{1}{df_H L(f_H|N,n_H)}
-$${#eq-lk-rates}
-
-We can use the binomial to get the likelihood of different rate hypothesis.
+Let's start by formalizing the problem in Bayesian terms. The probability of the next coin being heads it's equal to the expected rate of heads for the coin itself. We do not know the rate but we can estimate the probability function of the rate from the coin flips that already happened.
 
 $$
-L(f_H|N,n_H) = P(n_H|N,f_H)P(f_H)
+p(f_H|n_H,N) \propto P(n_H|f_H,N) P(f_H)
 $$
 
-And substitute in @eq-lk-rates.
+$N$ is a known variable so it stays to the left of the proposition.
+
+Given that the prior for $f_H$ is uniform, we can ignore the prior and the equation simplifies to
 
 $$
-L(n_H+1=Heads|N,n_H) = \int_{f_H=0}^{1}{df_H P(n_H|N,f_H)P(f_H)}
+p(f_H|n_H,N) \propto P(n_H|f_H,N)
 $$
 
-Since we are assuming a uniform prior on $f_H$ 
+$P(n_H|f_H,N)$ can be computed using the binomial distribution:
+
+> The probability of "heads" given a rate of heads for the coin (its "fairness") and the number of times we flip the coin
 
 $$
-\int_{f_H=0}^{1}{df_HP(f_H)} := 1
+P(n_H|f_H,N) = {N \choose n_H}{f_H}^{n_H}(1-f_H)^{N-n_H}
+$$
+Which we can substitute above and drop $N \choose n_H$, as it is a constant term across all values of $f_H$.
+$$
+P(f_H|n_H,N) \propto {f_H}^{n_H}(1-f_H)^{N-n_H}
+$$ {#eq-bayes-rule-bent-coin}
+
+What we have now is simply the kernel of the binomial distribution: the beta distribution. Luckily there are easy ways to solve for $f_H$ (one is the beta integral above). The integral is
+
+$$
+P(N+1=H) = P(f_H|n_H,N) = \int_0^1{d{f_H}}{f_H}^{n_H}(1-f_H)^{N-n_H}
 $$
 
-Which leaves
 
-$$
-L(n_H+1=Heads|N,n_H) = \int_{f_H=0}^{1}{df_H P(n_H|N,f_H)}
-$$
+::: {.callout-note appearance=default}
+
+The _kernel_ of a distribution is the *part of a probability density that contains all the dependence on the variable*.
+
+:::
+
+Let's plot the beta distribution for each of the above draws and compute the probability of heads for the $N+1$ draw.
 
 
+```{r}
+#| fig-cap: Sketch of the posterior distribution of $f_H$ given a fixed number of draws and a fixed number of heads.
+#| label: fig-2.8-new-draw-bent-coin
+
+beta <- function(draws, heads, fh) {
+  fh**heads * (1 - fh)**(draws - heads)
+}
+
+df <- data.frame(
+  question = c(
+    r"($N$ = 3 and $n_H$ = 0)",
+    r"($N$ = 3 and $n_H$ = 2)",
+    r"($N$ = 10 and $n_H$ = 3)",
+    r"($N$ = 300 and $n_H$ = 29)"
+  ),
+  draws = c(3, 3, 10, 300),
+  heads = c(0, 2, 3, 29)
+) %>%
+  expand_grid(fh = seq(0.0, 1.0, 0.01)) %>%
+  mutate(lfh = beta(draws, heads, fh)) %>%
+  group_by(question) %>%
+  mutate(sum_lfh = sum(lfh)) %>%
+  mutate(pfh = lfh / sum_lfh)
+
+p <- df %>%
+  ggplot(aes(fh, pfh, color = question)) +
+  geom_line(alpha = .3) +
+  geom_point(size = 0.5) +
+  ggthemes::scale_color_few(
+    name = "Coin Flips",
+    labels = TeX(df$question)
+  ) +
+  ggthemes::theme_few() +
+  theme(
+    legend.text = element_text(hjust = 0),
+    legend.position = "bottom"
+  ) +
+  labs(
+    x = TeX(r"($f_H$)"),
+    y = TeX(r"($P(f_H|N,n_H)$)"),
+  )
+
+suppressMessages(suppressWarnings(print(p)))
+```
+
+We sketched the posteriors in @fig-2.8-new-draw-bent-coin Now let's compute the probability of heads for the next draw as given by the beta integral in each case (solved between 0 and 1).
+
+```{r}
+#| label: tbl-2.8-probability-next-head-bent-coin
+#| tbl-cap: Probability of heads for the next draw given the previous draws.
+
+beta_integral <- function(draws, heads) {
+  (heads + 1) / (draws + 2)
+}
+
+data.frame(
+  Draws = c(3, 3, 10, 300),
+  Heads = c(0, 2, 3, 29)
+) %>%
+  mutate(`$P(N+1=Heads)$` = round(beta_integral(Draws, Heads), 3)) %>%
+  knitr::kable(align = "ccc")
+```
+
+@tbl-2.8-probability-next-head-bent-coin shows the probabilities of obtaining heads on the next draw given different sets of coin flips.
+
+I have to say I made it a lot more simplistic than it is. The proper way to compute the values in @tbl-2.8-probability-next-head-bent-coin would have been to compute the $P(B)$ in the full Bayesian equation at @eq-bayes-rule-bent-coin instead of just ignoring it and use proportionality.
+
+The full derivation simplifies to $(n_H+1)/(N+2)$ for uniform priors (which I used directly in @tbl-2.8-probability-next-head-bent-coin.

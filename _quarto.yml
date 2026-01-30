@@ -14,7 +14,7 @@ website:
   back-to-top-navigation: true
 
 theme: 
-  light: flatly
+  light: cosmo
   dark: darkly
 
 engine: knitr
@@ -24,7 +24,6 @@ number-sections: false
 
 fig-dpi: 300
 bibliography: bibliography.bib
-citeproc: true
 link-citations: true
 
 code-fold: true
@@ -35,6 +34,16 @@ callout-appearance: minimal
 format:
   html:
     useMath: true
+    # Useful only for offline usage
+    # html-math-method: katex
+    # url: "{{ env.QUARTO_KATEX_PATH }}"
+  pdf:
+    documentclass: article
+    include-in-header:
+     - text: |
+         \usepackage{cancel}
+         \usepackage{mathtools}
+         \usepackage{bm}
 
 execute:
   freeze: true

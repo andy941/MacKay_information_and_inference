@@ -36,6 +36,7 @@
           ggthemes
           kableExtra
           plotly
+          latex2exp
         ]);
 
         prodPackages = with pkgs; [
@@ -43,12 +44,14 @@
           zsh
           pyright
           black
+          nodePackages.katex
           (pkgs.rWrapper.override { packages = rPkgs; })
           (pkgs.python3.withPackages (pyPkgs))
           (quarto.override {
             extraPythonPackages = pyPkgs;
             extraRPackages = rPkgs;
           })
+          texlive.combined.scheme-full
         ];
       in {
         devShells.default = pkgs.mkShell {
@@ -57,6 +60,7 @@
 
           shellHook = ''
             export RETICULATE_PYTHON=$(which python)
+            export QUARTO_KATEX_PATH=$(which katex)
 
             echo "R:                       ${pkgs.rWrapper}"
             echo "Python:                  ${pkgs.python3}"
