@@ -1,5 +1,5 @@
 ---
-title: "Probability, Entropy and Inference"
+title: "Chapter 02 - Probability, Entropy and Inference"
 date: 03/07/2005
 date-format: "DD MMMM YYYY"
 date-modified: last-modified
@@ -353,3 +353,21 @@ data.frame(
 I have to say I made it a lot more simplistic than it is. The proper way to compute the values in @tbl-2.8-probability-next-head-bent-coin would have been to compute the $P(B)$ in the full Bayesian equation at @eq-bayes-rule-bent-coin instead of just ignoring it and use proportionality.
 
 The full derivation simplifies to $(n_H+1)/(N+2)$ for uniform priors (which I used directly in @tbl-2.8-probability-next-head-bent-coin.
+
+### Exercise 2.10
+
+::: {.callout-note}
+
+Urn A contains three balls: one black, and two white; urn B contains three balls: two black, and one white. One of the urns is selected at random and one ball is drawn. The ball is black. What is the probability that the selected urn is urn A?
+
+:::
+
+### Exercise 2.11
+
+::: {.callout-note}
+
+Urn A contains five balls: one black, two white, one green and one pink; urn B contains five hundred balls: two hundred black, one hundred white, 50 yellow, 40 cyan, 30 sienna, 25 green, 25 silver, 20 gold, and 10 purple. In other words: One fifth of A’s balls are black, two-fifths of B’s are black. 
+
+One of the urns is selected at random and one ball is drawn. The ball is black. What is the probability that the urn is urn A?
+
+:::
